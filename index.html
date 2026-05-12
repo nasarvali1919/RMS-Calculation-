@@ -221,16 +221,18 @@ function doLogin() {
 
 function doLogout() {
     sessionStorage.removeItem('rms_auth');
-    document.getElementById('appContent').style.display = 'none';
-    document.getElementById('loginScreen').style.display = 'flex';
+    location.reload();
 }
+
+let appInitialized = false;
 
 function showApp() {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
+    if (!appInitialized) { init(); appInitialized = true; }
 }
 
-// Auto-login if session exists
+// Check session on page load
 (function() {
     const auth = sessionStorage.getItem('rms_auth');
     if (auth) {
@@ -240,6 +242,7 @@ function showApp() {
             if (valid) { showApp(); return; }
         } catch(e) {}
     }
+    // No valid session — show login screen (already visible by default)
 })();
 
 // Allow Enter key to login
@@ -866,8 +869,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-// Start
-init();
+// Start — init() is called from showApp() after login
 </script>
 </body>
 </html>
